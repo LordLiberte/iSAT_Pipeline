@@ -1,9 +1,14 @@
-output "s3_bucket_name" {
-  description = "Nombre del bucket S3 para datos procesados"
-  value       = aws_s3_bucket.isat_data.id
+output "resource_group_name" {
+  description = "El nombre del Grupo de Recursos en Azure"
+  value       = azurerm_resource_group.rg.name
 }
 
-output "ecr_repository_url" {
-  description = "URL del repositorio ECR para las imágenes Docker"
-  value       = aws_ecr_repository.isat_repository.repository_url
+output "acr_name" {
+  description = "El nombre de tu Azure Container Registry (necesario para GitHub)"
+  value       = azurerm_container_registry.acr.name
+}
+
+output "acr_login_server" {
+  description = "La URL del servidor de tu registro"
+  value       = azurerm_container_registry.acr.login_server
 }
