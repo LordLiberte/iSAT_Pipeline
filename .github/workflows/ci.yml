@@ -37,7 +37,7 @@ jobs:
         with:
           resource-group: isat-pipeline-rg
           name: web-isat
-          dns-name-label: isat-app-pipeline-ghost  # <--- AÑADE ESTA LÍNEA
+          dns-name-label: isat-app-pipeline-ghost
           image: ${{ secrets.ACR_LOGIN_SERVER }}/isat-app:latest
           registry-login-server: ${{ secrets.ACR_LOGIN_SERVER }}
           registry-username: ${{ secrets.ACR_USERNAME }}

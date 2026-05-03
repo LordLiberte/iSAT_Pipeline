@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime
 from pathlib import Path
 import pandas as pd
+import joblib
 
 from src.isat_pipeline.config import PROCESSED_DATA_DIR, MODEL_PATH
 from src.isat_pipeline.ml.detector import load_model, predict
@@ -12,7 +13,7 @@ st.set_page_config(page_title="iSAT Pipeline Dashboard", layout="wide")
 st.title("iSAT Pipeline — Monitorización de calidad de piezas")
 
 processed_file = PROCESSED_DATA_DIR / "processed.csv"
-model = load_model()
+model = joblib.load('models/isat_detector.joblib')
 
 if processed_file.exists():
     df = pd.read_csv(processed_file, parse_dates=["timestamp"])
