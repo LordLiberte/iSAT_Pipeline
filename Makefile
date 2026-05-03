@@ -1,19 +1,17 @@
-.PHONY: 
-
-install lint test run-api run-dashboard train generate
+.PHONY: install lint test run-api run-dashboard train generate flow docker-build compose-up
 
 install:
 	pip install -r requirements.txt
 
 lint:
-	ruff check src/ tests/
-	ruff format --check src/ tests/
+	ruff check src tests
+	ruff format --check src tests
 
 test:
 	pytest
 
 run-api:
-	uvicorn isat_pipeline.api.main:app --reload --port 8000
+	uvicorn src.isat_pipeline.api.main:app --reload --port 8000
 
 run-dashboard:
 	streamlit run dashboard/app.py
@@ -21,5 +19,11 @@ run-dashboard:
 generate:
 	python generator/generate.py --n 5000 --output data/raw/
 
-train:
-	jupyter nbconvert --to notebook --execute notebooks/train_model.ipynb`
+flow:
+	python -m src.isat_pipeline.orchestrator
+
+docker-build:
+	docker build -t isat-pipeline:latest .
+
+compose-up:
+	docker compose up --build
