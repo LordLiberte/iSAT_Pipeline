@@ -9,4 +9,5 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["uvicorn", "src.isat_pipeline.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Cambiamos esto para que use Streamlit en el puerto 8501
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
