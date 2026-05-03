@@ -20,4 +20,4 @@ def list_recent_events(limit: int = 50) -> List[PieceEvent]:
 def count_defects() -> int:
     with get_session() as session:
         statement = select(PieceEvent).where(PieceEvent.defect != "no_defecto")
-        return session.exec(statement).count()
+        return len(list(session.exec(statement)))

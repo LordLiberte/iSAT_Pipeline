@@ -42,7 +42,7 @@ def extract_features(rows: List[Dict[str, Any]]) -> Tuple[List[List[float]], Lis
             row["temperature"],
             row["speed"],
         ])
-        y.append(row["defect"])
+        y.append(row.get("defect", "unknown"))
     return X, y
 
 
