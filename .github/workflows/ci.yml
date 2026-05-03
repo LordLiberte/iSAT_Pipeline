@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD Pipeline
 
 on:
   push:
@@ -25,14 +25,31 @@ jobs:
       - name: Run linter
         run: ruff check src tests
 
-  build:
+  build-and-push:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
+      
+      # Construye la imagen localmente en la máquina de GitHub
       - name: Build Docker image
-        run: docker build -t isat-pipeline:ci .
+        run: docker build -t isat-pipeline:latest .
+
+      # --- NUEVOS PASOS PARA AZURE ---
+      
+      # 1. Autenticación en Azure usando secretos de GitHub
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # 2. Autenticación específica en tu ACR
+      - name: Log in to Azure Container Registry
+        run: |
+          az acr login --name ${{ secrets.ACR_NAME }}
+
+      # 3. Etiquetar y subir la imagen al registro
+      - name: Push image to ACR
+        run: |
+          docker tag isat-pipeline:latest ${{ secrets.ACR_NAME }}.azurecr.io/isat-pipeline:latest
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/isat-pipeline:latest
