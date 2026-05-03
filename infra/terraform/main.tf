@@ -18,7 +18,7 @@ provider "azurerm" {
 # 1. Crear el Grupo de Recursos en Azure
 resource "azurerm_resource_group" "rg" {
   name     = "isat-pipeline-rg"
-  location = "West Europe" # Puedes cambiarlo por "East US" u otra región si prefieres
+  location = "North Europe" # Puedes cambiarlo por "East US" u otra región si prefieres
 }
 
 # 2. Crear un número aleatorio para que el nombre del ACR sea único mundialmente
