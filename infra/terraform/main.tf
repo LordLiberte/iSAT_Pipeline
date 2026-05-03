@@ -15,21 +15,21 @@ provider "azurerm" {
   features {}
 }
 
-# 1. Crear el Grupo de Recursos en Azure
+# 1. Grupo de Recursos en Madrid
 resource "azurerm_resource_group" "rg" {
   name     = "isat-pipeline-rg"
-  location = "East US" # Puedes cambiarlo por "East US" u otra región si prefieres
+  location = "Spain Central" 
 }
 
-# 2. Crear un número aleatorio para que el nombre del ACR sea único mundialmente
+# 2. Número aleatorio
 resource "random_integer" "ri" {
   min = 10000
   max = 99999
 }
 
-# 3. Crear el Almacén de Contenedores (ACR)
+# 3. Almacén de Contenedores (ACR) con nombre nuevo
 resource "azurerm_container_registry" "acr" {
-  name                = "isatregistry${random_integer.ri.result}"
+  name                = "isatreg${random_integer.ri.result}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = "Basic"
