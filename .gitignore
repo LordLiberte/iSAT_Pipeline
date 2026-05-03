@@ -6,8 +6,6 @@ __pycache__/
 *.pytest_cache/
 .pytest_cache/
 
-data/
-models/
 *.log
 *.sqlite3
 *.db
