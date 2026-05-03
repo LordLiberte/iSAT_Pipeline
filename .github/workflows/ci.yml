@@ -44,6 +44,6 @@ jobs:
           registry-password: ${{ secrets.ACR_PASSWORD }}
           location: spaincentral
           ports: 8501
-          ip-address: public
+          ip-address: Public
           cpu: 1
           memory: 1.5
