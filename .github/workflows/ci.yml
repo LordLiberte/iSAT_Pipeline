@@ -3,34 +3,46 @@ name: iSAT Pipeline CI/CD
 on:
   push:
     branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
 
 jobs:
-  build-and-push:
+  build-push-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 1. Login en Azure usando el JSON de AZURE_CREDENTIALS
+      # 1. Login en Azure
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # 2. Login en tu nuevo Almacén de Contenedores (ACR)
-      - name: Login to Azure Container Registry
+      # 2. Login en el Almacén (ACR)
+      - name: Login to ACR
         uses: azure/docker-login@v1
         with:
           login-server: ${{ secrets.ACR_LOGIN_SERVER }}
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      # 3. Construir la imagen Docker y subirla
+      # 3. Construir y subir imagen (usamos 'latest' para que Azure siempre coja la última)
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/isat-app:${{ github.sha }} .
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/isat-app:${{ github.sha }}
-          docker tag ${{ secrets.ACR_LOGIN_SERVER }}/isat-app:${{ github.sha }} ${{ secrets.ACR_LOGIN_SERVER }}/isat-app:latest
+          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/isat-app:latest .
           docker push ${{ secrets.ACR_LOGIN_SERVER }}/isat-app:latest
+
+      # 4. DESPLIEGUE AUTOMÁTICO A AZURE (Esto es lo nuevo)
+      - name: Deploy to Azure Container Instances
+        uses: azure/aci-deploy@v1
+        with:
+          resource-group: isat-pipeline-rg
+          name: web-isat
+          image: ${{ secrets.ACR_LOGIN_SERVER }}/isat-app:latest
+          registry-login-server: ${{ secrets.ACR_LOGIN_SERVER }}
+          registry-username: ${{ secrets.ACR_USERNAME }}
+          registry-password: ${{ secrets.ACR_PASSWORD }}
+          location: spaincentral
+          ports: 8501
+          ip-address: public
+          cpu: 1
+          memory: 1.5
